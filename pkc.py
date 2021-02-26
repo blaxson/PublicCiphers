@@ -129,12 +129,15 @@ D662A4D18E73AFA32D779D5918D08BC8858F4DCEF97C2A24\
     # MITM
     ptA = decryptCipherText(mallory.key_a, ctA) # decrypt alice's message for bob
     ptB = decryptCipherText(mallory.key_b, ctB) # dc bob's message for alice
-    ctForBob = createCipherText(ptA, mallory.key_b) # ec alice's msg for bob w/ mallory's key that matches bob's
-    ctForAlice = createCipherText(ptB, mallory.key_a) #  ec bob's msg for alice w/ mallory's key that matches alice's
+    print("Intercepted message intended for bob: {}".format(ptA))
+    print("Intercepted message intended for alice: {}".format(ptB))
+    ct_for_bob = createCipherText(ptA, mallory.key_b) # ec alice's msg for bob w/ mallory's key that matches bob's
+    ct_for_alice = createCipherText(ptB, mallory.key_a) #  ec bob's msg for alice w/ mallory's key that matches alice's
+    msg_for_bob = decryptCipherText(bob.key, ct_for_bob)
+    msg_for_alice = decryptCipherText(alice.key, ct_for_alice)
+    print("Message received by bob: {}".format(msg_for_bob))
+    print("Message received by alice: {}".format(msg_for_alice))
     #
-
-    decryptCipherText(bob.key, ctForBob)
-    decryptCipherText(alice.key, ctForAlice)
 
 def createCipherText(bytes_msg, key):
     cipher = AES.new(key, AES.MODE_CBC)
@@ -153,7 +156,7 @@ def decryptCipherText(key, json_input):
         ct = b64decode(b64['ciphertext'])
         cipher = AES.new(key, AES.MODE_CBC, iv)
         pt = unpad(cipher.decrypt(ct), AES.block_size)
-        print("The message was: ", pt)
+        #print("The message was: ", pt)
         return pt
     except (ValueError, KeyError):
         print("Incorrect decryption")
