@@ -35,9 +35,12 @@ class Person:
         key = sha.digest()
         self.sym_key = key[:16]
 
-    """ F function that is used by attacker to manipulate cipher key """
+    """ F function that is used by attacker to manipulate cipher key, sends 
+        1 to user as c because 1^d mod n = 1... modular exploit """
     def F(self, user):
-        self.send_encrypted_s(user)
+        self.s = 1
+        self.c = 1
+        user.c = 1
     
     def send_message(self, user, m):
         cipher = AES.new(self.sym_key, AES.MODE_CBC)
